@@ -4,7 +4,7 @@ services:
     ports:
       - "8200:8200"
     volumes:
-      - ./config/vault.json:/vault/config/vault.json
+      - /opt/vault/config/vault.json:/vault/config/vault.json
       - vault:/vault/data
       
     cap_add:
