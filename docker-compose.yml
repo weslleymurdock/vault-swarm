@@ -5,6 +5,7 @@ services:
       - "8200:8200"
     volumes:
       - /opt/vault/config/vault.json:/vault/config/vault.json
+      - /opt/vault/policies/:/vault/policies/
       - vault:/vault/data
       
     cap_add:
