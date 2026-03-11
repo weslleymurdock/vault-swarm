@@ -1,0 +1,47 @@
+services:
+
+  vault:
+    image: hashicorp/vault:1.15
+    command: server -config=/vault/config/vault.hcl
+    volumes:
+      - vault_data:/vault/data
+    configs:
+      - source: vault_config
+        target: /vault/config/vault.hcl
+    networks:
+      - vault_net
+    ports:
+      - target: 8200
+        published: 8200
+        protocol: tcp
+        mode: host
+    deploy:
+      mode: replicated
+      replicas: 3
+      placement:
+        constraints:
+          - node.role == manager
+      restart_policy:
+        condition: any
+      update_config:
+        parallelism: 1
+        delay: 10s
+    healthcheck:
+      test: ["CMD", "vault", "status"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+    environment:
+      VAULT_ADDR: http://127.0.0.1:8200
+
+networks:
+  vault_net:
+    driver: overlay
+
+volumes:
+  vault_data:
+    driver: local
+    
+configs:
+  vault_config:
+    file: ./config/vault.hcl
